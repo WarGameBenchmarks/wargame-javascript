@@ -47,8 +47,8 @@ class Card {
     negative- if v2 is higher
   */
   compare(other) {
-    let v1 = this.getValue();
-    let v2 = other.getValue();
+    let v1 = this.value;
+    let v2 = other.value;
     return v1 - v2;
   }
 
@@ -76,7 +76,7 @@ function array_shuffle(array) {
 
 class Deck {
 
-  constructor(cards) {
+  constructor(cards = []) {
     this.cards = cards;
   }
 
@@ -101,7 +101,7 @@ class Deck {
   }
 
   get hasCards() {
-    return this.length() > 0;
+    return this.length > 0;
   }
 
   get card() {
@@ -113,16 +113,16 @@ class Deck {
   }
 
   giveCard(other) {
-    if (this.length() == 0) {
+    if (this.length == 0) {
       return;
     }
 
-    let card = this.cards.pop(0);
+    let card = this.cards.shift();
     other.addCard(card);
   }
 
   giveCards(other) {
-    for (var i = 0; i < this.length(); i++) {
+    for (var i = 0; i < this.length; i++) {
       this.giveCard(other);
     }
   }
@@ -148,10 +148,63 @@ class Deck {
 
 function game() {
 
+  let player1 = Deck.fresh();
 
+  player1.shuffle();
 
-  
+  let player2 = player1.split();
 
+  let winner = new Deck();
 
+  base: while (player1.hasCards && player2.hasCards) {
+
+    let card1 = player1.card;
+    let card2 = player2.card;
+
+    player1.giveCard(winner);
+    player2.giveCard(winner);
+
+    if (card1.compare(card2) == 0) {
+      console.log('war');
+
+      do {
+
+        if (player1.length < 4 || player2.length < 4) {
+          console.log('a player ran out of cards');
+          console.log('cards left = %o/%o', player1.length, player2.length);
+          break base;
+        }
+
+        for (let i = 0; i < 3; i++) {
+          player1.giveCard(winner);
+          player2.giveCard(winner);
+        }
+
+        card1 = player1.card;
+        card2 = player2.card;
+
+        if (card1.compare(card2) < 0) {
+          console.log('player2 won war: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+          winner.shuffle();
+          winner.giveCards(player2);
+        } else if (card1.compare(card2) > 0) {
+          console.log('player1 won war: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+          winner.shuffle();
+          winner.giveCards(player1);
+        }
+
+      } while (card1.compare(card2) == 0);
+
+    } else if (card1.compare(card2) < 0) {
+      console.log('player2 won: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+      winner.shuffle();
+      winner.giveCards(player2);
+    } else if (card1.compare(card2) > 0) {
+      console.log('player1 won: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+      winner.shuffle();
+      winner.giveCards(player1);
+    }
+
+  }
 
 }
