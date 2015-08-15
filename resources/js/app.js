@@ -165,13 +165,13 @@ function game() {
     player2.giveCard(winner);
 
     if (card1.compare(card2) == 0) {
-      console.log('war');
+      //console.log('war began: %o vs %o; deck sizes = %o|%o', card1.value, card2.value, player1.length, player2.length);
 
       do {
 
         if (player1.length < 4 || player2.length < 4) {
-          console.log('a player ran out of cards');
-          console.log('cards left = %o/%o', player1.length, player2.length);
+          //console.log('a player ran out of cards');
+          //console.log('deck sizes = %o/%o', player1.length, player2.length);
           break base;
         }
 
@@ -184,11 +184,11 @@ function game() {
         card2 = player2.card;
 
         if (card1.compare(card2) < 0) {
-          console.log('player2 won war: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+          //console.log('player2 won war: %o vs %o; deck sizes = %o/%o', card1.value, card2.value, player1.length, player2.length);
           winner.shuffle();
           winner.giveCards(player2);
         } else if (card1.compare(card2) > 0) {
-          console.log('player1 won war: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+          //console.log('player1 won war: %o vs %o; deck sizes = %o/%o', card1.value, card2.value, player1.length, player2.length);
           winner.shuffle();
           winner.giveCards(player1);
         }
@@ -196,11 +196,11 @@ function game() {
       } while (card1.compare(card2) == 0);
 
     } else if (card1.compare(card2) < 0) {
-      console.log('player2 won: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+      //console.log('player2 won: %o vs %o; deck sizes = %o/%o', card1.value, card2.value, player1.length, player2.length);
       winner.shuffle();
       winner.giveCards(player2);
     } else if (card1.compare(card2) > 0) {
-      console.log('player1 won: %o vs %o; cards left = %o/%o', card1.value, card2.value, player1.length, player2.length);
+      //console.log('player1 won: %o vs %o; deck sizes = %o/%o', card1.value, card2.value, player1.length, player2.length);
       winner.shuffle();
       winner.giveCards(player1);
     }
@@ -208,3 +208,55 @@ function game() {
   }
 
 }
+
+
+
+function start() {
+
+  var games = [];
+  var diffs = [];
+  // measure
+
+  function updateDisplay() {
+
+  }
+
+  function test() {
+    var t1 = performance.now();
+    var t2 = performance.now();
+    var counter = 0;
+    do {
+      counter++;
+      game();
+      t2 = performance.now();
+    } while (t2 - t1 <= 1000);
+
+    var diff = (t2 - t1);
+    games.push(counter);
+    diffs.push(diff);
+  }
+
+  for (let i = 0; i < 60; i++) {
+    var delay = 500 * i;
+
+    setTimeout(test, delay);
+  }
+
+  var update = setInterval(function(){
+
+    // console.log('%o games took %o ms, or %o g/ms', games, diff, (games / diff));
+    var sum_games = games.reduce((a,b) => a + b);
+    var sum_diffs = diffs.reduce((a,b) => a + b);
+
+    console.log('%o games took %o ms, or %o g/ms', sum_games, sum_diffs, (sum_games / sum_diffs));
+
+    if (games.length >= 60) {
+      clearInterval(update);
+    }
+
+  }, 499);
+
+
+}
+
+setTimeout(start, 500);
