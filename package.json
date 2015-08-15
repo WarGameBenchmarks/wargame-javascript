@@ -1,0 +1,22 @@
+{
+  "name": "wargame-javascript",
+  "version": "0.1.0",
+  "description": "the wargame implemented in javascript",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp-concat": "~2.6.0",
+    "gulp": "~3.9.0",
+    "gulp-babel": "~5.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wargame",
+    "javascript",
+    "es6"
+  ],
+  "author": "ryan rampersad",
+  "license": "MIT"
+}
