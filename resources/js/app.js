@@ -148,10 +148,12 @@ function initialization() {
   init();
 
   // Test: does the WarGame build actually work? Have it fail here instead, first.
-  let t1 = performance.now();
-  game();
-  let _t1 = performance.now() - t1;
-  console.log('single wargame: %s ms or %s g/ms', _t1.toFixed(4), (1/_t1).toFixed(4));
+(function(){
+  let t1 = performance.now(), t2 = 0, n = 1000;
+  for (let _i = 0; _i < 1000; _i++) {game();}
+  t2 = performance.now() - t1;
+  console.log('%d wargames: %s ms total; %s g/ms', n, t1.toFixed(4), (n/t2).toFixed(4));
+})();
 
 }
 
