@@ -29,11 +29,17 @@ function test() {
   // game loop for one second; this repeats 60 times for 1 minute of game time
   // this prevents the browser from marking this as a broken run-away script, hopefully
 
-  do {
+  // do {
+  //   counter++;
+  //   game();
+  //   t2 = performance.now();
+  // } while (t2 - t1 <= 1000);
+
+  while ((t2 - t1) <= 1000) {
     counter++;
     game();
     t2 = performance.now();
-  } while (t2 - t1 <= 1000);
+  }
 
   // push the values onto the array
   var time_difference = (t2 - t1);
