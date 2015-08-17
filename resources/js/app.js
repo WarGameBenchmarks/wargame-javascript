@@ -155,6 +155,16 @@ function initialization() {
   console.log('%d wargames: %s ms total; %s g/ms', n, t1.toFixed(4), (n/t2).toFixed(4));
 })();
 
+  (function(){
+    let t1 = performance.now(), t2 = t1, n = 1000, i = 0;
+    while ((t2 - t1) <= n) {
+      i++;
+      game();
+      t2 = performance.now() - t1;
+    }
+    console.log('%d wargames: %s ms total; %s g/ms', i, n, (i/t2).toFixed(4));
+  })();
+
 }
 
 window.onload = initialization;
