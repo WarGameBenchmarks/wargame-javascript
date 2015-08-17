@@ -211,52 +211,102 @@ function game() {
 
 
 
-function start() {
+function initialization() {
 
   var games = [];
   var diffs = [];
+  var tests = 0;
   // measure
 
-  function updateDisplay() {
+  var display = {
+    stats: null,
+    timeRemaining: null,
+    games: null,
+    speed: null,
+    score: null
+  };
 
+  // get hooks to various elements
+  function init() {
+    display.stats = document.getElementById('stats');
+    display.timeRemaining = document.getElementById('time-remaining');
+    display.games = document.getElementById('games');
+    display.speed = document.getElementById('speed');
+    display.score = document.getElementById('score');
+    console.log(display);
+    document.getElementById('start').addEventListener('click', function(e){
+      start();
+      e.preventDefault();
+    });
   }
 
   function test() {
+
+    // increment test counter
+    tests++;
+
+    // setup performance timers ; TODO make an abstraction for this so other non-chrome's are supported
     var t1 = performance.now();
     var t2 = performance.now();
-    var counter = 0;
+
+    var counter = 0; // iteration counter
+
+    // game loop for one second; this repeats 60 times for 1 minute of game time
+    // this prevents the browser from marking this as a broken run-away script
     do {
       counter++;
       game();
       t2 = performance.now();
     } while (t2 - t1 <= 1000);
 
+    // push the values onto the array
     var diff = (t2 - t1);
     games.push(counter);
     diffs.push(diff);
   }
 
-  for (let i = 0; i < 60; i++) {
-    var delay = 500 * i;
-
-    setTimeout(test, delay);
+  function updateDisplay(games, speed) {
+    display.games.innerHTML = games + " games";
+    display.speed.innerHTML = speed.toFixed(4) + " g/ms";
+    display.timeRemaining.innerHTML = 60 - tests;
   }
 
-  var update = setInterval(function(){
+  function updateDone(speed) {
+    display.score.style['display'] = 'block';
+    display.score.innerHTML = 'Score: <strong>' + Math.round(speed) + '</strong>';
+  }
 
-    // console.log('%o games took %o ms, or %o g/ms', games, diff, (games / diff));
+  function update(){
     var sum_games = games.reduce((a,b) => a + b);
     var sum_diffs = diffs.reduce((a,b) => a + b);
+    var speed = (sum_games / sum_diffs);
 
-    console.log('%o games took %o ms, or %o g/ms', sum_games, sum_diffs, (sum_games / sum_diffs));
+    console.log('test %o: %o games took %o ms, or %o g/ms', tests, sum_games, sum_diffs, speed);
 
     if (games.length >= 60) {
-      clearInterval(update);
+      console.log('done');
+      setTimeout(function(){
+        updateDone(speed);
+      }, 1000);
     }
 
-  }, 499);
+    updateDisplay(sum_games, speed);
+  }
+
+
+  function start() {
+    display.stats.style['display'] = 'block';
+    for (let i = 0; i < 60; i++) {
+      var delay = i * 10;
+
+      setTimeout(test, delay);
+      setTimeout(update, delay);
+    }
+  }
+
+  init();
 
 
 }
 
-setTimeout(start, 500);
+window.onload = initialization;

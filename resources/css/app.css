@@ -1,0 +1,54 @@
+
+body {
+  font-size: 1rem;
+  font-family: sans-serif;
+  background-color: #efefef;
+  padding: 0; margin: 0;
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+  font-size: 2.5rem;
+  background-color: #000;
+  color: #fff;
+  margin: 0;
+  padding: 2rem 0 2rem 0;
+}
+
+p {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.introduction {
+  font-size: 1.3rem;
+}
+
+.row {
+  width: 100%;
+  padding: 2rem 0;
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+#score {
+  background-color: #000;
+  color: #fff;
+}
+
+#time-remaining {
+  background-color: #90C3D4;
+}
+
+#games {
+  background-color: #d4a190;
+}
+
+#speed {
+  background-color: #a1d490;
+}

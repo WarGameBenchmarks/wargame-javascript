@@ -2,7 +2,12 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>wargame-javascript</title>
+
+<link rel="stylesheet" href="resources/css/app.css" media="screen" title="no title" charset="utf-8">
 
 <script type="text/javascript" src="resources/build/js/app.js"></script>
 
@@ -10,11 +15,31 @@
 </head>
 <body>
 
-<h1>WarGame-Javascript</h1>
+<h1>WarGame JavaScript</h1>
 
-<div>
-  <span id="time-remaining"></span>
-  <span id="games"></span>
+<div class="container">
+
+  <div class="introduction">
+    <p>This is the WarGame JavaScript implementation. <a href="#" id="start">Start!</a></p>
+  </div>
+
+
+  <div id="stats" class="row hidden">
+    <div>
+      <div class="row" id="time-remaining"></div>
+    </div>
+    <div>
+      <div class="row" id="games"></div>
+    </div>
+    <div>
+      <div class="row" id="speed"></div>
+    </div>
+    <div>
+      <div class="row hidden" id="score"></div>
+    </div>
+  </div>
+
+
 </div>
 
 </body>
