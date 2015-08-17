@@ -20,6 +20,16 @@ p {
   text-align: center;
 }
 
+#start {
+  width: 100%;
+  padding: 2rem 0;
+  text-align: center;
+  background: #fff;
+  font-size: 2rem;
+  text-decoration: none;
+  color: red;
+}
+
 .hidden {
   display: none;
 }
@@ -41,7 +51,7 @@ p {
   color: #fff;
 }
 
-#time-remaining {
+#countdown {
   background-color: #90C3D4;
 }
 

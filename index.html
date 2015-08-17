@@ -7,8 +7,10 @@
 
 <title>wargame-javascript</title>
 
-<link rel="stylesheet" href="resources/css/app.css" media="screen" title="no title" charset="utf-8">
+<link rel="stylesheet" href="resources/css/app.css" charset="utf-8">
 
+<script type="text/javascript" src="resources/build/js/vendor.js"></script>
+<script type="text/javascript" src="resources/build/js/wargame.js"></script>
 <script type="text/javascript" src="resources/build/js/app.js"></script>
 
 
@@ -20,13 +22,17 @@
 <div class="container">
 
   <div class="introduction">
-    <p>This is the WarGame JavaScript implementation. <a href="#" id="start">Start!</a></p>
+    <p>This is the WarGame JavaScript implementation.</p>
+  </div>
+
+  <div>
+    <a href="#" id="start" class="hidden">Start!</a>
   </div>
 
 
   <div id="stats" class="row hidden">
     <div>
-      <div class="row" id="time-remaining"></div>
+      <div class="row" id="countdown"></div>
     </div>
     <div>
       <div class="row" id="games"></div>
@@ -41,6 +47,11 @@
 
 
 </div>
+
+<!-- frames! -->
+<div id="frame"></div>
+
+<!-- <iframe src="resources/templates/test-template.html" width="0" height="0"></iframe> -->
 
 </body>
 </html>
