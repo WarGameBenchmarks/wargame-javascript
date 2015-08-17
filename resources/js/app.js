@@ -147,6 +147,11 @@ function initialization() {
 
   init();
 
+  // Test: does the WarGame build actually work? Have it fail here instead, first.
+  let t1 = performance.now();
+  game();
+  let _t1 = performance.now() - t1;
+  console.log('single wargame: %s ms or %s g/ms', _t1.toFixed(4), (1/_t1).toFixed(4));
 
 }
 

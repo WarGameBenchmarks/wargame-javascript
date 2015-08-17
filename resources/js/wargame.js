@@ -123,7 +123,8 @@ class Deck {
 
   giveCards(other) {
     for (var i = 0; i < this.length; i++) {
-      this.giveCard(other);
+      // this.giveCard(other);
+      other.addCard(this.cards.pop());
     }
   }
 
@@ -131,14 +132,17 @@ class Deck {
   static fresh() {
 
     var cards = [];
-    [Suits.Clubs, Suits.Hearts, Suits.Diamonds, Suits.Spades].forEach(function(suit){
-      [Values.Two, Values.Three, Values.Four, Values.Five,
+    var suits = [Suits.Clubs, Suits.Hearts, Suits.Diamonds, Suits.Spades];
+    var values = [Values.Two, Values.Three, Values.Four, Values.Five,
        Values.Six, Values.Seven, Values.Eight, Values.Nine,
-       Values.Ten, Values.Jack, Values.Queen, Values.King, Values.Ace].forEach(function(value){
-         let card = new Card(value, suit);
-         cards.push(card);
-       });
-    });
+       Values.Ten, Values.Jack, Values.Queen, Values.King, Values.Ace];
+
+    // allegedly this is faster than forEach
+    for (var i = 0, z = suits.length; i < z; i++) {
+      for (var k = 0, x = values.length; k < x; k++) {
+        cards.push(new Card(values[k], suits[i]));
+      }
+    }
 
     return new Deck(cards);
   }
