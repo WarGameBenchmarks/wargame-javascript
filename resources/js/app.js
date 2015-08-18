@@ -4,6 +4,7 @@ function initialization() {
   var games = [];
   var diffs = [];
   var samples = 0, limit = 0;
+  var N_SAMPLES = 120;
   // measure
 
   var payload = {
@@ -33,8 +34,8 @@ function initialization() {
     return t2;
   }
 
-  function getGamesInSecond() {
-    let t1 = Profiler.time(), t2 = t1, n = 1000, i = 0;
+  function getGamesInTimeframe() {
+    let t1 = Profiler.time(), t2 = t1, n = 500, i = 0;
     while ((t2 - t1) <= n) {
       i++;
       game();
@@ -105,7 +106,7 @@ function initialization() {
   // Test: does the WarGame build actually work? Have it fail here instead, first.
   function setup_limits() {
       // limit = Math.floor(getGamesInSecond());
-      limit = (getGamesInSecond());
+      limit = (getGamesInTimeframe());
       getMSIn1KGames(); // ignore this fow now
   }
 
@@ -149,8 +150,8 @@ function initialization() {
 
     // update();
 
-    if (games.length < 60) {
-      setTimeout(sample, 250);
+    if (games.length < N_SAMPLES) {
+      setTimeout(sample, 50);
     }
 
 
@@ -159,7 +160,7 @@ function initialization() {
   function updateDisplay(games, speed) {
     display.games.html(games + " games");
     display.speed.html(speed.toFixed(4) + " g/ms");
-    display.countdown.html( 60 - samples == -1 ? 0 : 60 - samples );
+    display.countdown.html( N_SAMPLES - samples == -1 ? 0 : N_SAMPLES - samples );
   }
 
   function updateDone(speed) {
@@ -178,7 +179,7 @@ function initialization() {
 
     console.log('sample %o: %o games took %s ms, or %s g/ms', games.length, sum_games, sum_diffs.toFixed(4), speed.toFixed(4));
 
-    if (games.length >= 60) {
+    if (games.length >= N_SAMPLES) {
       console.log('done');
       setTimeout(function(){
         updateDone(speed);
