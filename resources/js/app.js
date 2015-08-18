@@ -99,7 +99,7 @@ function initialization() {
     // push the values onto the array
     var time_difference = (t2 - t1);
     // record(counter, time_difference);
-    listener(counter, time_difference);
+    collect(counter, time_difference);
   }
 
 

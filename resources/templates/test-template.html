@@ -12,10 +12,10 @@
 // %%%
 
 function record(iterations, time) {
-  if (window && window.parent && window.parent.listen) {
+  if (window && window.parent && window.parent.collector) {
     window.parent.collector(iterations, time);
   } else {
-    console.log('test: could not record data');
+    console.warn('test: could not record data');
   }
 }
 
