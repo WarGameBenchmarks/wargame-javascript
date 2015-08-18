@@ -3,7 +3,7 @@ function initialization() {
 
   var games = [];
   var diffs = [];
-  var samples = 0;
+  var samples = 0, limit = 0;
   // measure
 
   var payload = {
@@ -24,11 +24,31 @@ function initialization() {
     iframe: null
   };
 
+  function getMSIn1KGames() {
+    let t1 = Profiler.time(), t2 = 0, d = 0, n = 1000;
+    for (let _i = 0; _i < 1000; _i++) {game();}
+    t2 = Profiler.time();
+    d = t2 - t1;
+    console.log('%d wargames: %s ms total; %s g/ms', n, d.toFixed(4), (n/d).toFixed(4));
+    return t2;
+  }
+
+  function getGamesInSecond() {
+    let t1 = Profiler.time(), t2 = t1, n = 1000, i = 0;
+    while ((t2 - t1) <= n) {
+      i++;
+      game();
+      t2 = Profiler.time();
+    }
+    console.log('%d wargames: %s ms total; %s g/ms', i, n, (i/n).toFixed(4));
+    return i;
+  }
+
   function collect(iterations, time) {
     games.push(iterations);
     diffs.push(time);
 
-    console.log('listener accepted data');
+    console.log('collected data');
 
     update();
   }
@@ -45,6 +65,7 @@ function initialization() {
     display.score = $('#score');
     display.start = $('#start');
 
+    setup_limits();
     setup_payload();
     setup_start();
     setup_frame();
@@ -57,6 +78,7 @@ function initialization() {
   }
 
   function setup_start() {
+    display.start.show();
     display.start.on('click', function(e){
       start();
       e.preventDefault();
@@ -80,21 +102,32 @@ function initialization() {
     });
   }
 
+  // Test: does the WarGame build actually work? Have it fail here instead, first.
+  function setup_limits() {
+      // limit = Math.floor(getGamesInSecond());
+      limit = (getGamesInSecond());
+      getMSIn1KGames(); // ignore this fow now
+  }
+
   function test() {
     var counter = 0; // iteration counter
 
     // setup performance timers ; TODO make an abstraction for this so other non-chrome's are supported
-    var t1 = performance.now();
+    var t1 = Profiler.time();
     var t2 = t1;
 
     // game loop for one second; this repeats 60 times for 1 minute of game time
     // this prevents the browser from marking this as a broken run-away script, hopefully
 
-    while ((t2 - t1) <= 1000) {
-      counter++;
-      game();
-      t2 = performance.now();
-    }
+    // while ((t2 - t1) <= 1000) {
+    //   counter++;
+    //   game();
+    //   t2 = Profiler.time();
+    // }
+    var i = limit;
+    for (; i > 0; i--) {game();}
+    t2 = Profiler.time();
+    counter += limit;
 
     // push the values onto the array
     var time_difference = (t2 - t1);
@@ -108,16 +141,16 @@ function initialization() {
     // increment test counter
     samples++
 
-    console.log('sample %o: starting began', samples);
+    console.log('sample %o: test began', samples);
 
     test();
 
-    console.log('sample %o: sample completed', samples);
+    console.log('sample %o: test completed', samples);
 
     // update();
 
     if (games.length < 60) {
-      setTimeout(sample, 0);
+      setTimeout(sample, 250);
     }
 
 
@@ -143,7 +176,7 @@ function initialization() {
     var sum_diffs = diffs.reduce((a,b) => a + b);
     var speed = (sum_games / sum_diffs);
 
-    console.log('sample %o: %o games took %o ms, or %o g/ms', games.length, sum_games, sum_diffs, speed);
+    console.log('sample %o: %o games took %s ms, or %s g/ms', games.length, sum_games, sum_diffs.toFixed(4), speed.toFixed(4));
 
     if (games.length >= 60) {
       console.log('done');
@@ -158,30 +191,18 @@ function initialization() {
 
   function start() {
     display.stats.css('display', 'block');
-    display.start.hide();
 
-    setTimeout(sample, 1000);
+    display.start.html('Loading...');
+
+    setTimeout(function(){
+      display.start.hide();
+      setTimeout(sample, 500);
+    }, 100);
   }
 
   init();
 
-  // Test: does the WarGame build actually work? Have it fail here instead, first.
-(function(){
-  let t1 = performance.now(), t2 = 0, n = 1000;
-  for (let _i = 0; _i < 1000; _i++) {game();}
-  t2 = performance.now() - t1;
-  console.log('%d wargames: %s ms total; %s g/ms', n, t1.toFixed(4), (n/t2).toFixed(4));
-})();
 
-  (function(){
-    let t1 = performance.now(), t2 = t1, n = 1000, i = 0;
-    while ((t2 - t1) <= n) {
-      i++;
-      game();
-      t2 = performance.now() - t1;
-    }
-    console.log('%d wargames: %s ms total; %s g/ms', i, n, (i/t2).toFixed(4));
-  })();
 
 }
 
