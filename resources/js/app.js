@@ -24,7 +24,7 @@ function initialization() {
     iframe: null
   };
 
-  function listener(iterations, time) {
+  function collect(iterations, time) {
     games.push(iterations);
     diffs.push(time);
 
@@ -33,7 +33,7 @@ function initialization() {
     update();
   }
 
-  window.listen = listener;
+  window.collector = collect;
 
   // get hooks to various elements
   function init() {
@@ -108,18 +108,11 @@ function initialization() {
     // increment test counter
     samples++
 
-    console.log('sample %o', samples);
-
-    // var re = /\/\/\s\%\%\%/gi; // should replace // %%%
-    // var content = payload.template.replace(re, payload.wargame);
-    //
-    // frame.iframe.contentDocument.open();
-    // frame.iframe.contentDocument.write(content);
-    // frame.iframe.contentDocument.close();
+    console.log('sample %o: starting began', samples);
 
     test();
 
-    console.log('sample %o: iframe written', samples);
+    console.log('sample %o: sample completed', samples);
 
     // update();
 
@@ -143,6 +136,7 @@ function initialization() {
 
   function update(){
     if (games.length == 0 || diffs.length == 0) {
+      updateDisplay(0, 0);
       return;
     }
     var sum_games = games.reduce((a,b) => a + b);
@@ -155,7 +149,7 @@ function initialization() {
       console.log('done');
       setTimeout(function(){
         updateDone(speed);
-      }, 1000);
+      }, 500);
     }
 
     updateDisplay(sum_games, speed);
