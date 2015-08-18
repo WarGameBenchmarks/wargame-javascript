@@ -80,6 +80,28 @@ function initialization() {
     });
   }
 
+  function test() {
+    var counter = 0; // iteration counter
+
+    // setup performance timers ; TODO make an abstraction for this so other non-chrome's are supported
+    var t1 = performance.now();
+    var t2 = t1;
+
+    // game loop for one second; this repeats 60 times for 1 minute of game time
+    // this prevents the browser from marking this as a broken run-away script, hopefully
+
+    while ((t2 - t1) <= 1000) {
+      counter++;
+      game();
+      t2 = performance.now();
+    }
+
+    // push the values onto the array
+    var time_difference = (t2 - t1);
+    // record(counter, time_difference);
+    listener(counter, time_difference);
+  }
+
 
   function sample() {
 
@@ -88,12 +110,14 @@ function initialization() {
 
     console.log('sample %o', samples);
 
-    var re = /\/\/\s\%\%\%/gi; // should replace // %%%
-    var content = payload.template.replace(re, payload.wargame);
+    // var re = /\/\/\s\%\%\%/gi; // should replace // %%%
+    // var content = payload.template.replace(re, payload.wargame);
+    //
+    // frame.iframe.contentDocument.open();
+    // frame.iframe.contentDocument.write(content);
+    // frame.iframe.contentDocument.close();
 
-    frame.iframe.contentDocument.open();
-    frame.iframe.contentDocument.write(content);
-    frame.iframe.contentDocument.close();
+    test();
 
     console.log('sample %o: iframe written', samples);
 
