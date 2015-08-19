@@ -46,6 +46,15 @@ p {
   text-align: center;
 }
 
+footer {
+  margin-top: 3rem;
+  text-align: center;
+  font-size: .9rem;
+}
+footer a {
+  color: #999;
+}
+
 #score {
   background-color: #000;
   color: #fff;

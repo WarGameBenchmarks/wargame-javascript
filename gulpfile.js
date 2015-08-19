@@ -5,6 +5,7 @@ var concat = require('gulp-concat');
 // personally written javascript
 gulp.task('js', function(){
   var files = [
+    'resources/js/profiler.js',
     'resources/js/app.js'
   ];
   return gulp.src(files)

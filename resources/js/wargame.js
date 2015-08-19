@@ -1,3 +1,9 @@
+
+/*
+  Values and Suits can be looked at like enums, except, in ES6 there are no enums.
+  The freeze below is my best attempt to that end, but it's a half measure,
+  since these cannot be used with their enum value, just their literal value.
+*/
 var Values = {
   Two: 2,
   Three: 3,
@@ -91,7 +97,6 @@ class Deck {
     return new Deck(_cards);
   }
 
-  // TODO
   shuffle() {
     this.cards = array_shuffle(this.cards);
   }
@@ -151,7 +156,6 @@ class Deck {
 
 
 function game() {
-
   let player1 = Deck.fresh();
 
   player1.shuffle();
@@ -170,9 +174,7 @@ function game() {
 
     if (card1.compare(card2) == 0) {
       //console.log('war began: %o vs %o; deck sizes = %o|%o', card1.value, card2.value, player1.length, player2.length);
-
       do {
-
         if (player1.length < 4 || player2.length < 4) {
           //console.log('a player ran out of cards');
           //console.log('deck sizes = %o/%o', player1.length, player2.length);
@@ -196,9 +198,7 @@ function game() {
           winner.shuffle();
           winner.giveCards(player1);
         }
-
       } while (card1.compare(card2) == 0);
-
     } else if (card1.compare(card2) < 0) {
       //console.log('player2 won: %o vs %o; deck sizes = %o/%o', card1.value, card2.value, player1.length, player2.length);
       winner.shuffle();
@@ -208,31 +208,5 @@ function game() {
       winner.shuffle();
       winner.giveCards(player1);
     }
-
   }
-
 }
-
-// https://gist.github.com/saich/2993641
-/**
- * @constructor
- */
-function Profiler() {
-}
-
-/**
- * Uses the best resolution timer that is currently available.
- * The return value of this can only be used for measuring the time interval,
- * and *MUST NOT* be used to get the absolute current time.
- *
- * Make sure now to change any global variable/state. (Do not override the window.performance object,
- * but just maintain a reference to the browser function if you just want to use it)
- *
- * @return {Number}
- */
-Profiler.time = (function() {
-	var perf = window.performance || {};
-	var fn = perf.now || perf.mozNow || perf.webkitNow || perf.msNow || perf.oNow;
-	// fn.bind will be available in all the browsers that support the advanced window.performance... ;-)
-	return fn ? fn.bind(perf) : function() { return new Date().getTime(); };
-})();

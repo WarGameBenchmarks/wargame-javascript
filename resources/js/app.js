@@ -1,17 +1,19 @@
 
+/*
+  Initialize the testing page, and setup the tests.
+*/
 function initialization() {
-
+  // global variables to store data in
   var games = [];
   var diffs = [];
   var samples = 0, limit = 0;
+
+  // configuration; looking for 120 samples (since each sample is 500 ms now)
   var N_SAMPLES = 120;
-  // measure
 
-  var payload = {
-    wargame: '',
-    template: ''
-  }
-
+  /*
+    Global object to contain element references.
+  */
   var display = {
     stats: null,
     countdown: null,
@@ -20,11 +22,9 @@ function initialization() {
     score: null
   };
 
-  var frame = {
-    jq: null,
-    iframe: null
-  };
-
+  /*
+    Gets the number of MS that it takes 1000 games to run in.
+  */
   function getMSIn1KGames() {
     let t1 = Profiler.time(), t2 = 0, d = 0, n = 1000;
     for (let _i = 0; _i < 1000; _i++) {game();}
@@ -34,6 +34,9 @@ function initialization() {
     return t2;
   }
 
+  /*
+    Gets the number of games that it takes in the given timeframe, specifically set to 500ms right now.
+  */
   function getGamesInTimeframe() {
     let t1 = Profiler.time(), t2 = t1, n = 500, i = 0;
     while ((t2 - t1) <= n) {
@@ -45,6 +48,10 @@ function initialization() {
     return i;
   }
 
+  /*
+    In the original framed version, this would collect the game count and duration of the tests in the frame.
+    It functions the same now, but also calls update once the data collection is done.
+  */
   function collect(iterations, time) {
     games.push(iterations);
     diffs.push(time);
@@ -54,9 +61,9 @@ function initialization() {
     update();
   }
 
-  window.collector = collect;
-
-  // get hooks to various elements
+  /*
+    Hook up various parts of the page UI.
+  */
   function init() {
     display.frame = $('#frame');
     display.stats = $('#stats');
@@ -67,78 +74,60 @@ function initialization() {
     display.start = $('#start');
 
     setup_limits();
-    setup_payload();
     setup_start();
-    setup_frame();
   }
 
-  function setup_frame() {
-    frame.jq = $('<iframe id="testframe" class="hidden" />');
-    frame.iframe = frame.jq.get(0);
-    display.frame.append(frame.iframe);
-  }
-
+  /*
+    Setup the start button, show it and add the click handler.
+  */
   function setup_start() {
-    display.start.show();
+    display.start.css('display', 'block');
     display.start.on('click', function(e){
       start();
       e.preventDefault();
     });
   }
 
-  function setup_payload() {
-    $.ajax({
-      dataType: 'text',
-      url: 'resources/build/js/wargame.js',
-    }).done(function(t1){
-      payload.wargame = t1;
-    }).then(function(){
-      $.ajax({
-        dataType: 'text', url: 'resources/templates/test-template.html'
-      }).done(function(t2){
-        payload.template = t2;
-      }).then(function(){
-        display.start.css('display', 'block');
-      });
-    });
-  }
-
-  // Test: does the WarGame build actually work? Have it fail here instead, first.
+  /*
+    How many games does it take to equal the timeframe? Find out here
+  */
   function setup_limits() {
-      // limit = Math.floor(getGamesInSecond());
       limit = (getGamesInTimeframe());
       getMSIn1KGames(); // ignore this fow now
   }
 
+  /*
+    The actual testing function:
+    1. start the timer using the Profiler polyfill
+    2. loop from the limit found previously by the timeframe, to 0
+    3. collect the data into the collection data arrays
+  */
   function test() {
     var counter = 0; // iteration counter
 
-    // setup performance timers ; TODO make an abstraction for this so other non-chrome's are supported
+    // setup performance timers
     var t1 = Profiler.time();
     var t2 = t1;
 
-    // game loop for one second; this repeats 60 times for 1 minute of game time
+    // game loop for one timeframe worth of games; this repeats N_SAMPLE times for 1 minute of game time
     // this prevents the browser from marking this as a broken run-away script, hopefully
 
-    // while ((t2 - t1) <= 1000) {
-    //   counter++;
-    //   game();
-    //   t2 = Profiler.time();
-    // }
     var i = limit;
-    for (; i > 0; i--) {game();}
+    while (i--) {
+      game();
+    }
     t2 = Profiler.time();
     counter += limit;
 
-    // push the values onto the array
     var time_difference = (t2 - t1);
-    // record(counter, time_difference);
+    // push the values onto the array
     collect(counter, time_difference);
   }
 
-
+  /*
+    Call each test, one after the other, with a bit of delay between each so the browser can draw or paint or something.
+  */
   function sample() {
-
     // increment test counter
     samples++
 
@@ -148,26 +137,34 @@ function initialization() {
 
     console.log('sample %o: test completed', samples);
 
-    // update();
-
     if (games.length < N_SAMPLES) {
       setTimeout(sample, 50);
     }
-
-
   }
 
+  /*
+    Update the UI on the page when the tests are being sampled.
+  */
   function updateDisplay(games, speed) {
     display.games.html(games + " games");
     display.speed.html(speed.toFixed(4) + " g/ms");
     display.countdown.html( N_SAMPLES - samples == -1 ? 0 : N_SAMPLES - samples );
   }
 
+  /*
+    Update the UI when the sampling is over.
+
+    Display the score.
+  */
   function updateDone(speed) {
     display.score.css('display', 'block');
     display.score.html('Score: <strong>' + Math.round(speed) + '</strong>');
   }
 
+  /*
+    On each update, calculate the sum of the game iterations, and the total duration,
+    and then get an average between them to get a speed value.
+  */
   function update(){
     if (games.length == 0 || diffs.length == 0) {
       updateDisplay(0, 0);
@@ -179,6 +176,8 @@ function initialization() {
 
     console.log('sample %o: %o games took %s ms, or %s g/ms', games.length, sum_games, sum_diffs.toFixed(4), speed.toFixed(4));
 
+    // if the number of samples is larger or equal to N_SAMPLES, we're done here
+    // so updateDone and show the score
     if (games.length >= N_SAMPLES) {
       console.log('done');
       setTimeout(function(){
@@ -189,7 +188,9 @@ function initialization() {
     updateDisplay(sum_games, speed);
   }
 
-
+  /*
+    When the start button is pressed, start.
+  */
   function start() {
     display.stats.css('display', 'block');
 
@@ -201,10 +202,8 @@ function initialization() {
     }, 100);
   }
 
+  // initialize this mess
   init();
-
-
-
 }
 
 window.onload = initialization;
