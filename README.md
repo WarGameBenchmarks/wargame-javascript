@@ -7,14 +7,9 @@ It feels slow. Watch out.
 
 Notes
 -----
+Most browsers will punish long running scripts by asking the user if they really want to continue running them. To avoid that issue:
+1. When the page is initialized, two initial tests will be performed and measured. The first measures the time in milliseconds it takes to run 1000 games. The second is the number of games it takes in one timeframe, or 500ms. The number returned by the latter test is used test afterwards too.
+2. With the games per timeframe found, the page will sample 120 tests, 500ms each, for a total of 60 seconds or 1 minute (something standard across all wargames).
+3. After all that, the values are summed, and used to determine the speed or *g/ms*
 
-Unlike other versions of the WarGame, the JavaScript version cannot run unchecked at full throttle because most browsers will detain it eventually for stalling the main thread. That's a reasonable concern.
-
-To get around that limitation, the WGJS implementation runs for 1 second 60 times, tracking the duration and games run in each sample.
-
-While I get the awful performance sorted out, here are my findings (2015-8-17).
-- Mobile Chrome on my Nexus 6 is very often scoring 0 or 1
-- Mobile Firefox on my Nexus 6 is decent, scoring 4
-- Desktop Chrome can sometimes peak at 11, but then quickly fall to an average 6, or fall even further to a 3
-- Desktop Firefox scores a stable 10
-- Desktop Edge scores a 4
+This is not as robust, I feel, as the other WarGame implementations, since JavaScript is so *slow*. It can be fast though. On some tests, we've seen between 12 and 20 *g/ms*.
